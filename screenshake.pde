@@ -17,6 +17,7 @@ void draw() {
   screenshake.update();
 
   pushMatrix();
+  
   PVector screenshakeOffset = screenshake.getOffset(); 
   translate(centerX + screenshakeOffset.x, centerY + screenshakeOffset.y); 
   rotate( screenshake.getRotation() );
@@ -24,14 +25,12 @@ void draw() {
   fill(c[0]);
   rect(-50,-50, 100, 100);
 
-
-  
   popMatrix();
 }
 
 void mouseReleased() {
-   screenshake.set( 1, 1 ); 
-}
+   screenshake.set( random(0.1, 10), 1 ); //Intensity and duration (in seconds) 
+}                                         //A negative duration is interpreted as infinite 
 
 
 
@@ -51,12 +50,11 @@ class Screenshaker {
       float currentTime = millis();
       float timeDiff = currentTime - timeStamp; 
       offset.set( random(-intensity, intensity), random(-intensity, intensity) ); 
-      rotation = random(-intensity, intensity) * 0.1;       //attenuation on rotation to achieve
-                                                            //intensity similar to offset
+      rotation = random(-intensity, intensity) * 0.025; //attenuation on rotation to achieve
+                                                        //intensity similar to offset
       intensity -= decayPerSecond * timeDiff * 0.001; 
       timeStamp = currentTime;
     } else {
-      println("stop", timeStamp);
       offset.set( 0, 0 ); 
       rotation = 0;
     }
@@ -69,9 +67,15 @@ class Screenshaker {
   void set(float _intensity, float _duration) {
     intensity = _intensity; 
     duration = _duration; 
-    decayPerSecond = intensity / duration; 
+    if(duration < 0 ){ 
+       decayPerSecond = 0;  
+    } else if( duration == 0 ){
+       intensity = 0; 
+       decayPerSecond = 0; 
+    } else {
+       decayPerSecond = intensity / duration;    
+    }
     timeStamp = millis();
-    println("start", timeStamp);
   }
 
   PVector getOffset() {
