@@ -1,2 +1,0 @@
-# screenshakeClass
-Quick screenshake class. 
